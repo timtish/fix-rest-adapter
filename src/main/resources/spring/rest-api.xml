@@ -1,0 +1,43 @@
+<camelContext id="camel-rest" xmlns="http://camel.apache.org/schema/spring"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <restConfiguration host="{{service.listener.host}}" port="{{service.listener.port}}"
+                       component="jetty"
+                       bindingMode="json"
+                       skipBindingOnErrorCode="false"
+                       enableCORS="true"
+                       contextPath="/">
+        <dataFormatProperty key="prettyPrint" value="false"/>
+    </restConfiguration>
+
+    <rest  path="/">
+        <get uri="/">
+            <to uri="direct:info"/>
+        </get>
+        <post uri="/list">
+            <to uri="direct:list"/>
+        </post>
+        <post uri="/req">
+            <to uri="direct:fix-request"/>
+        </post>
+        <get uri="/req">
+            <to uri="direct:fix-request"/>
+        </get>
+    </rest>
+
+    <route>
+        <from uri="direct:info"/>
+        <setBody><simple>rest api</simple></setBody>
+    </route>
+    <route>
+        <from uri="direct:list"/>
+        <setBody><constant>TODO</constant></setBody>
+    </route>
+    <route>
+        <from uri="direct:fix-request"/>
+        <to uri="vm:process-fix-request"/>
+    </route>
+</camelContext>
+
